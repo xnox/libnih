@@ -337,6 +337,7 @@ test_poll (void)
 	nih_free (watch);
 
 
+#ifdef PTRACE_SETOPTIONS
 	/* Check that a signal raised from a traced child causes the reaper
 	 * to be called with a traced event and the event in the status
 	 * field.  It should not be removed from the list since the child
@@ -514,6 +515,7 @@ test_poll (void)
 	nih_free (watch);
 #if HAVE_VALGRIND_VALGRIND_H
 	}
+#endif
 #endif
 
 
