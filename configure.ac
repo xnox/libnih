@@ -39,7 +39,6 @@ AC_CHECK_HEADERS([valgrind/valgrind.h pty.h libutil.h linux/socket.h])
 # Checks for typedefs, structures, and compiler characteristics.
 AC_PROG_CC_C99
 AM_PROG_CC_C_O
-NIH_C_THREAD
 
 # Checks for library functions.
 
