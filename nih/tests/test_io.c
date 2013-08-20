@@ -623,6 +623,7 @@ test_message_new (void)
 	}
 }
 
+#ifdef SCM_CREDENTIALS
 void
 test_message_add_control (void)
 {
@@ -708,6 +709,7 @@ test_message_add_control (void)
 
 	nih_free (msg);
 }
+#endif
 
 void
 test_message_recv (void)
@@ -3175,7 +3177,9 @@ main (int   argc,
 	test_buffer_shrink ();
 	test_buffer_push ();
 	test_message_new ();
+#ifdef SCM_CREDENTIALS
 	test_message_add_control ();
+#endif
 	test_message_recv ();
 	test_message_send ();
 	test_reopen ();
