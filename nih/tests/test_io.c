@@ -21,7 +21,9 @@
 
 #include <nih/test.h>
 
+#ifdef HAVE_LINUX_SOCKET_H
 #include <linux/socket.h>
+#endif
 
 #include <sys/types.h>
 #include <sys/socket.h>

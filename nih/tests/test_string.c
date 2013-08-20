@@ -24,7 +24,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#ifdef HAVE_PTY_H
 #include <pty.h>
+#elif HAVE_LIBUTIL_H
+#include <sys/tty.h>
+#include <libutil.h>
+#endif
 #include <fcntl.h>
 #include <stdarg.h>
 #include <string.h>

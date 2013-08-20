@@ -34,7 +34,7 @@ AC_CHECK_LIB([expat], [XML_ParserCreate],
 	     [AC_MSG_ERROR([expat library not found])])
 
 # Checks for header files.
-AC_CHECK_HEADERS([valgrind/valgrind.h])
+AC_CHECK_HEADERS([valgrind/valgrind.h pty.h libutil.h linux/socket.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_PROG_CC_C99
