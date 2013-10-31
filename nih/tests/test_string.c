@@ -1737,7 +1737,11 @@ test_str_screen_width (void)
 	winsize.ws_col = 40;
 	winsize.ws_xpixel = 0;
 	winsize.ws_ypixel = 0;
-	openpty (&pty, &pts, NULL, NULL, &winsize);
+	if (openpty (&pty, &pts, NULL, NULL, &winsize) < 0) {
+	  printf("Failed to open PTY: %s\n", strerror(errno));
+	  printf("Skipping tests\n");
+	  return;
+	}
 
 	/* Check that we can obtain the width of a screen, where one
 	 * is available.  It should match the number of columns in the
@@ -1805,7 +1809,11 @@ test_str_screen_wrap (void)
 	winsize.ws_col = 40;
 	winsize.ws_xpixel = 0;
 	winsize.ws_ypixel = 0;
-	openpty (&pty, &pts, NULL, NULL, &winsize);
+	if (openpty (&pty, &pts, NULL, NULL, &winsize) < 0) {
+	  printf("Failed to open PTY: %s\n", strerror(errno));
+	  printf("Skipping tests\n");
+	  return;
+	}
 
 	/* Check that we correctly wrap text to the width of the screen
 	 * when it is available.
