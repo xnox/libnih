@@ -43,6 +43,13 @@ NIH_C_THREAD
 
 # Checks for library functions.
 
+# Compat header
+case "$host" in
+     kfreebsd*-gnu)
+	AH_BOTTOM([#include "config-freebsd.h"])
+	;;
+esac
+
 # Other checks
 NIH_COMPILER_WARNINGS
 NIH_COMPILER_OPTIMISATIONS
