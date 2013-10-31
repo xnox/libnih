@@ -15,6 +15,12 @@
 
 	* nih/tests/test_file.c: don't use dirent.d_type (not portable)
 
+2012-10-25  James Hunt  <james.hunt@ubuntu.com>
+
+	* nih/logging.c: Use our own __nih_abort_msg rather than the
+	(e)glibc private symbol __abort_msg to avoid upgrade issues (LP: #997359).
+	* nih/tests/test_logging.c: Update tests for __nih_abort_msg.
+
 2011-08-31  James Hunt  <james.hunt@ubuntu.com>
 
 	* nih-dbus-tool/tests/test_com.netsplit.Nih.Test_object.c
