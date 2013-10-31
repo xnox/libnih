@@ -628,7 +628,9 @@ void
 test_message_add_control (void)
 {
 	NihIoMessage  *msg;
+#if defined(__linux__)
 	struct ucred   cred;
+#endif
 	int            ret, value;
 
 	TEST_FUNCTION ("nih_io_message_add_control");
@@ -667,6 +669,7 @@ test_message_add_control (void)
 		TEST_EQ_P (msg->control[1], NULL);
 	}
 
+#if defined(__linux__)
 
 	/* Check that we can append more control data onto the end of an
 	 * existing message.  The array should include both messages.
@@ -708,6 +711,8 @@ test_message_add_control (void)
 	}
 
 	nih_free (msg);
+#endif
+
 }
 #endif
 
@@ -777,6 +782,7 @@ test_message_recv (void)
 		nih_free (msg);
 	}
 
+#if defined(__linux__)
 
 	/* Check that we can receive a message that contains control data,
 	 * and that it's put in the structure.
@@ -966,6 +972,8 @@ test_message_recv (void)
 		nih_free (err);
 	}
 	nih_error_pop_context ();
+#endif
+
 }
 
 void
@@ -1067,6 +1075,7 @@ test_message_send (void)
 	nih_free (msg->control[0]);
 	msg->control[0] = NULL;
 
+#if defined(__linux__)
 
 	/* Check that we can send a message to a specific destination over
 	 * an unconnected socket.
@@ -1113,6 +1122,7 @@ test_message_send (void)
 
 	close (fds[0]);
 	close (fds[1]);
+#endif
 
 
 	/* Check that we get an error if the socket is closed. */
@@ -1817,6 +1827,7 @@ test_watcher (void)
 
 	nih_error_pop_context ();
 
+#if defined(__linux__)
 
 	/* Check that a message to be read on a socket watched by NihIo ends
 	 * up in the receive queue, and results in the reader function being
@@ -2231,6 +2242,8 @@ test_watcher (void)
 	nih_free (last_error);
 
 	nih_error_pop_context ();
+#endif
+
 }
 
 
@@ -3117,6 +3130,7 @@ void
 test_get_family (void)
 {
 	int fd;
+#if defined(__linux__)
 
 	TEST_FUNCTION ("nih_io_get_family");
 
@@ -3142,6 +3156,7 @@ test_get_family (void)
 
 		close (fd);
 	}
+#endif
 
 
 	/* Check that we can obtain the family of an IPv6 socket. */
