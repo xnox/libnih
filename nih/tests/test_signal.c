@@ -117,7 +117,13 @@ test_set_default (void)
 	TEST_FEATURE ("with invalid signal");
 	ret = nih_signal_set_default (SIGKILL);
 
+#if defined(__linux__)
 	TEST_LT (ret, 0);
+#else
+	/* On kFreeBSD one is allowed to set default handler on
+	   SIGKILL ?! */
+	TEST_EQ (ret, 0);
+#endif
 #if HAVE_VALGRIND_VALGRIND_H
 	}
 #endif
