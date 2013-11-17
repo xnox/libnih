@@ -43,6 +43,13 @@
 #include <nih-dbus/dbus_connection.h>
 #include <nih-dbus/errors.h>
 
+#if defined(__linux__)
+#define TEST_DBUS_PATH "unix:abstract=/com/netsplit/nih/test_dbus"
+#define TEST_DBUS_ERROR DBUS_ERROR_NO_SERVER
+#else
+#define TEST_DBUS_PATH "unix:path=/tmp/com_netsplit_nih_test_dbus"
+#define TEST_DBUS_ERROR DBUS_ERROR_FILE_NOT_FOUND
+#endif
 
 static DBusConnection *client_connection = NULL;
 
@@ -197,7 +204,7 @@ test_connect (void)
 				assert (sh = nih_signal_add_handler (NULL, SIGTERM,
 								     nih_main_term_signal, NULL));
 
-				server = nih_dbus_server ("unix:abstract=/com/netsplit/nih/test_dbus",
+				server = nih_dbus_server (TEST_DBUS_PATH,
 							  NULL, NULL);
 				assert (server != NULL);
 
@@ -224,7 +231,7 @@ test_connect (void)
 			}
 		}
 
-		conn = nih_dbus_connect ("unix:abstract=/com/netsplit/nih/test_dbus",
+		conn = nih_dbus_connect (TEST_DBUS_PATH,
 					 NULL);
 
 		if (test_alloc_failed) {
@@ -288,7 +295,7 @@ test_connect (void)
 				assert (sh = nih_signal_add_handler (NULL, SIGTERM,
 								     nih_main_term_signal, NULL));
 
-				server = nih_dbus_server ("unix:abstract=/com/netsplit/nih/test_dbus",
+				server = nih_dbus_server (TEST_DBUS_PATH,
 							  NULL, NULL);
 				assert (server != NULL);
 
@@ -314,7 +321,7 @@ test_connect (void)
 				exit (0);
 			}
 
-			conn = nih_dbus_connect ("unix:abstract=/com/netsplit/nih/test_dbus",
+			conn = nih_dbus_connect (TEST_DBUS_PATH,
 						 my_disconnect_handler);
 
 			assert (conn != NULL);
@@ -358,7 +365,6 @@ test_connect (void)
 		dbus_shutdown ();
 	}
 
-
 	/* Check that a fake Disconnected signal does not trigger automatic
 	 * disconnection but does call our other filter function.  We can
 	 * only test a wrong path and interface because otherwise D-Bus
@@ -374,7 +380,7 @@ test_connect (void)
 				assert (sh = nih_signal_add_handler (NULL, SIGTERM,
 								     nih_main_term_signal, NULL));
 
-				server = nih_dbus_server ("unix:abstract=/com/netsplit/nih/test_dbus",
+				server = nih_dbus_server (TEST_DBUS_PATH,
 							  NULL, NULL);
 				assert (server != NULL);
 
@@ -400,7 +406,7 @@ test_connect (void)
 				exit (0);
 			}
 
-			conn = nih_dbus_connect ("unix:abstract=/com/netsplit/nih/test_dbus",
+			conn = nih_dbus_connect (TEST_DBUS_PATH,
 						 my_disconnect_handler);
 
 			assert (conn != NULL);
@@ -445,7 +451,6 @@ test_connect (void)
 		dbus_shutdown ();
 	}
 
-
 	/* Check that by using a GUID we can reuse connections to the same
 	 * server, the second call to connect just returns the same
 	 * connection as the first.
@@ -460,7 +465,7 @@ test_connect (void)
 				assert (sh = nih_signal_add_handler (NULL, SIGTERM,
 								     nih_main_term_signal, NULL));
 
-				server = nih_dbus_server ("unix:abstract=/com/netsplit/nih/test_dbus",
+				server = nih_dbus_server (TEST_DBUS_PATH,
 							  NULL, NULL);
 				assert (server != NULL);
 
@@ -486,7 +491,7 @@ test_connect (void)
 				exit (0);
 			}
 
-			conn = nih_dbus_connect ("unix:abstract=/com/netsplit/nih/test_dbus,guid=deadbeef",
+			conn = nih_dbus_connect (TEST_DBUS_PATH",guid=deadbeef",
 						 my_disconnect_handler);
 
 			assert (conn != NULL);
@@ -508,7 +513,7 @@ test_connect (void)
 		last_conn = conn;
 
 		/* Make another connection */
-		conn = nih_dbus_connect ("unix:abstract=/com/netsplit/nih/test_dbus,guid=deadbeef",
+		conn = nih_dbus_connect (TEST_DBUS_PATH",guid=deadbeef",
 					 my_disconnect_handler);
 
 		if (test_alloc_failed
@@ -569,7 +574,7 @@ test_connect (void)
 				assert (sh = nih_signal_add_handler (NULL, SIGTERM,
 								     nih_main_term_signal, NULL));
 
-				server = nih_dbus_server ("unix:abstract=/com/netsplit/nih/test_dbus",
+				server = nih_dbus_server (TEST_DBUS_PATH,
 							  NULL, NULL);
 				assert (server != NULL);
 
@@ -588,7 +593,7 @@ test_connect (void)
 				exit (0);
 			}
 
-			conn = nih_dbus_connect ("unix:abstract=/com/netsplit/nih/test_dbus",
+			conn = nih_dbus_connect (TEST_DBUS_PATH,
 						 my_disconnect_handler);
 
 			assert (conn != NULL);
@@ -633,7 +638,7 @@ test_connect (void)
 	 */
 	TEST_FEATURE ("with non-listening server");
 	TEST_ALLOC_FAIL {
-		conn = nih_dbus_connect ("unix:abstract=/com/netsplit/nih/test_dbus",
+		conn = nih_dbus_connect (TEST_DBUS_PATH,
 					 NULL);
 
 		TEST_EQ_P (conn, NULL);
@@ -641,7 +646,7 @@ test_connect (void)
 		err = nih_error_get ();
 		TEST_EQ (err->number, NIH_DBUS_ERROR);
 		TEST_ALLOC_SIZE (err, sizeof (NihDBusError));
-		TEST_EQ_STR (((NihDBusError *)err)->name, DBUS_ERROR_NO_SERVER);
+		TEST_EQ_STR (((NihDBusError *)err)->name, TEST_DBUS_ERROR);
 		nih_free (err);
 
 		dbus_shutdown ();
@@ -662,7 +667,7 @@ test_connect (void)
 				assert (sh = nih_signal_add_handler (NULL, SIGTERM,
 								     nih_main_term_signal, NULL));
 
-				server = nih_dbus_server ("unix:abstract=/com/netsplit/nih/test_dbus",
+				server = nih_dbus_server (TEST_DBUS_PATH,
 							  my_method_connect_handler, NULL);
 				assert (server != NULL);
 
@@ -686,7 +691,7 @@ test_connect (void)
 			}
 		}
 
-		conn = nih_dbus_connect ("unix:abstract=/com/netsplit/nih/test_dbus",
+		conn = nih_dbus_connect (TEST_DBUS_PATH,
 					 NULL);
 
 		if (test_alloc_failed
@@ -782,7 +787,7 @@ test_connect (void)
 				assert (sh  = nih_signal_add_handler (NULL, SIGTERM,
 								      nih_main_term_signal, NULL));
 
-				server = nih_dbus_server ("unix:abstract=/com/netsplit/nih/test_dbus",
+				server = nih_dbus_server (TEST_DBUS_PATH,
 							  NULL, NULL);
 				assert (server != NULL);
 
@@ -809,7 +814,7 @@ test_connect (void)
 			}
 		}
 
-		conn = nih_dbus_connect ("unix:abstract=/com/netsplit/nih/test_dbus",
+		conn = nih_dbus_connect (TEST_DBUS_PATH,
 					 NULL);
 
 		if (test_alloc_failed
@@ -1067,7 +1072,7 @@ system_bus:
 		dbus_shutdown ();
 	}
 
-
+#if defined(__linux__)
 	/* Check that if the bus disconnects before registration, NULL
 	 * is returned along with an error.  Stock dbus tends to bail out
 	 * with an exit code, so we watch very carefully for that ;-)
@@ -1081,7 +1086,7 @@ system_bus:
 			assert (sh = nih_signal_add_handler (NULL, SIGTERM,
 							     nih_main_term_signal, NULL));
 
-			server = nih_dbus_server ("unix:abstract=/com/netsplit/nih/test_dbus",
+			server = nih_dbus_server (TEST_DBUS_PATH,
 						  NULL, NULL);
 			assert (server != NULL);
 
@@ -1101,7 +1106,7 @@ system_bus:
 		}
 
 		setenv ("DBUS_SYSTEM_BUS_ADDRESS",
-			"unix:abstract=/com/netsplit/nih/test_dbus", TRUE);
+			TEST_DBUS_PATH, TRUE);
 
 		conn = nih_dbus_bus (DBUS_BUS_SYSTEM, my_disconnect_handler);
 
@@ -1129,14 +1134,14 @@ system_bus:
 	assert (waitpid (pid1, &status, 0) == pid1);
 	if ((! WIFEXITED (status)) || (WEXITSTATUS (status) != 123))
 		TEST_FAILED ("unexpected exit(), unpatched D-Bus?");
-
+#endif
 
 	/* Check that if the bus is not available, NULL is returned and
 	 * an error.
 	 */
 	TEST_FEATURE ("with no bus");
 	setenv ("DBUS_SYSTEM_BUS_ADDRESS",
-		"unix:abstract=/com/netsplit/nih/test_foo", TRUE);
+		"unix:path=/com/netsplit/nih/test_foo", TRUE);
 
 	conn = nih_dbus_bus (DBUS_BUS_SYSTEM, my_disconnect_handler);
 
@@ -1145,7 +1150,7 @@ system_bus:
 	err = nih_error_get ();
 	TEST_EQ (err->number, NIH_DBUS_ERROR);
 	TEST_ALLOC_SIZE (err, sizeof (NihDBusError));
-	TEST_EQ_STR (((NihDBusError *)err)->name, DBUS_ERROR_NO_SERVER);
+	TEST_EQ_STR (((NihDBusError *)err)->name, TEST_DBUS_ERROR);
 	nih_free (err);
 
 	dbus_shutdown ();
@@ -1175,7 +1180,7 @@ test_setup (void)
 		assert (sh = nih_signal_add_handler (NULL, SIGTERM,
 						     nih_main_term_signal, NULL));
 
-		server = nih_dbus_server ("unix:abstract=/com/netsplit/nih/test_dbus",
+		server = nih_dbus_server (TEST_DBUS_PATH,
 					  NULL, NULL);
 		assert (server != NULL);
 
@@ -1208,7 +1213,7 @@ test_setup (void)
 	TEST_FEATURE ("with new connection");
 	TEST_ALLOC_FAIL {
 		TEST_ALLOC_SAFE {
-			conn = dbus_connection_open_private ("unix:abstract=/com/netsplit/nih/test_dbus",
+			conn = dbus_connection_open_private (TEST_DBUS_PATH,
 							     NULL);
 			assert (conn != NULL);
 			assert (dbus_connection_get_is_connected (conn));
@@ -1257,7 +1262,7 @@ test_setup (void)
 	TEST_FEATURE ("with existing connection");
 	TEST_ALLOC_FAIL {
 		TEST_ALLOC_SAFE {
-			conn = dbus_connection_open_private ("unix:abstract=/com/netsplit/nih/test_dbus",
+			conn = dbus_connection_open_private (TEST_DBUS_PATH,
 							     NULL);
 			assert (conn != NULL);
 			assert (dbus_connection_get_is_connected (conn));
@@ -1351,7 +1356,7 @@ test_server (void)
 	 */
 	TEST_FEATURE ("with new server");
 	TEST_ALLOC_FAIL {
-		server = nih_dbus_server ("unix:abstract=/com/netsplit/nih/test_dbus",
+		server = nih_dbus_server (TEST_DBUS_PATH,
 					  NULL, NULL);
 
 		if (test_alloc_failed) {
@@ -1385,13 +1390,13 @@ test_server (void)
 	TEST_FEATURE ("with connection to server");
 	TEST_ALLOC_FAIL {
 		TEST_ALLOC_SAFE {
-			server = nih_dbus_server ("unix:abstract=/com/netsplit/nih/test_dbus",
+			server = nih_dbus_server (TEST_DBUS_PATH,
 						  my_connect_handler,
 						  NULL);
 			assert (server != NULL);
 		}
 
-		conn = dbus_connection_open_private ("unix:abstract=/com/netsplit/nih/test_dbus", NULL);
+		conn = dbus_connection_open_private (TEST_DBUS_PATH, NULL);
 
 		TEST_NE_P (conn, NULL);
 
@@ -1426,12 +1431,12 @@ test_server (void)
 	TEST_FEATURE ("with disconnect by client");
 	TEST_ALLOC_FAIL {
 		TEST_ALLOC_SAFE {
-			server = nih_dbus_server ("unix:abstract=/com/netsplit/nih/test_dbus",
+			server = nih_dbus_server (TEST_DBUS_PATH,
 						  my_connect_handler,
 						  my_disconnect_handler);
 			assert (server != NULL);
 
-			conn = dbus_connection_open_private ("unix:abstract=/com/netsplit/nih/test_dbus", NULL);
+			conn = dbus_connection_open_private (TEST_DBUS_PATH, NULL);
 			assert (conn != NULL);
 
 			connected = FALSE;
@@ -1460,20 +1465,20 @@ test_server (void)
 		dbus_shutdown ();
 	}
 
-
+#if defined(__linux__)
 	/* Check that if the connect handler returns FALSE, the connection
 	 * is abandoned and the client disconnected.
 	 */
 	TEST_FEATURE ("with decline by connect handler");
 	TEST_ALLOC_FAIL {
 		TEST_ALLOC_SAFE {
-			server = nih_dbus_server ("unix:abstract=/com/netsplit/nih/test_dbus",
+			server = nih_dbus_server (TEST_DBUS_PATH,
 						  my_connect_handler,
 						  my_disconnect_handler);
 			assert (server != NULL);
 		}
 
-		conn = dbus_connection_open_private ("unix:abstract=/com/netsplit/nih/test_dbus", NULL);
+		conn = dbus_connection_open_private (TEST_DBUS_PATH, NULL);
 
 		TEST_NE_P (conn, NULL);
 
@@ -1483,7 +1488,6 @@ test_server (void)
 
 		disconnected = FALSE;
 		last_disconnection = NULL;
-
 		nih_main_loop ();
 
 		TEST_TRUE (connected);
@@ -1505,19 +1509,18 @@ test_server (void)
 		dbus_shutdown ();
 	}
 
-
 	/* Check that creating a server on an address which is already in
 	 * use returns no object and the error.
 	 */
 	TEST_FEATURE ("with address in use");
 	TEST_ALLOC_FAIL {
 		TEST_ALLOC_SAFE {
-			other_server = nih_dbus_server ("unix:abstract=/com/netsplit/nih/test_dbus",
+			other_server = nih_dbus_server (TEST_DBUS_PATH,
 							NULL, NULL);
 			assert (other_server != NULL);
 		}
 
-		server = nih_dbus_server ("unix:abstract=/com/netsplit/nih/test_dbus",
+		server = nih_dbus_server (TEST_DBUS_PATH,
 					  NULL, NULL);
 
 		TEST_EQ_P (server, NULL);
@@ -1533,6 +1536,7 @@ test_server (void)
 
 		dbus_shutdown ();
 	}
+#endif
 }
 
 

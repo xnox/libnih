@@ -462,7 +462,6 @@ test_new (void)
 		nih_free (watch);
 	}
 
-#if defined(__linux__)
 
 	/* Check that an error with the path given results in an error
 	 * being raised and NULL returned.
@@ -588,7 +587,6 @@ test_new (void)
 	rmdir (filename);
 
 	rmdir (dirname);
-#endif
 }
 
 
@@ -1592,6 +1590,9 @@ main (int   argc,
 	test_destroy ();
 	if (!getenv ("TRAVIS"))
 		test_reader ();
+#else
+	TEST_FEATURE ("nih_watch not supprted yet # TODO");
+	TEST_FAILED();
 #endif
 
 	return 0;
