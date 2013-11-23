@@ -33,6 +33,8 @@ AC_CHECK_LIB([expat], [XML_ParserCreate],
 			   [AC_MSG_ERROR([expat >= 2.0.0 required])])],
 	     [AC_MSG_ERROR([expat library not found])])
 
+AC_SEARCH_LIBS(inotify_init,inotify,,[AC_MSG_ERROR([inotify not found])])
+
 # Checks for header files.
 AC_CHECK_HEADERS([valgrind/valgrind.h pty.h libutil.h linux/socket.h])
 
