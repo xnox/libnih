@@ -288,6 +288,8 @@ NihError *nih_error_steal         (void)
 void      nih_error_push_context  (void);
 void      nih_error_pop_context   (void);
 
+int       nih_threadsafe          (void);
+
 NIH_END_EXTERN
 
 #endif /* NIH_ERROR_H */
