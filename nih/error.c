@@ -419,3 +419,18 @@ nih_error_pop_context (void)
 	nih_list_remove (&context->entry);
 	nih_free (context);
 }
+
+/**
+ * nih_threadsafe:
+ *
+ * return true if libnih was built to be thread-safe.
+ **/
+int
+nih_threadsafe (void)
+{
+#if defined(__thread)
+	return 0;
+#else
+	return 1;
+#endif
+}
