@@ -1242,7 +1242,7 @@ nih_io_closed (NihIo *io)
  *
  * Marks the NihIo structure to be closed once the buffers or queue have
  * been emptied, rather than immediately.  Closure is performed by calling
- * the close handler if given or nih_io_close().
+ * the close handler if given or nih_io_destroy().
  *
  * This is most useful to send a burst of data and discard the structure
  * once the data has been sent, without worrying about keeping track of
