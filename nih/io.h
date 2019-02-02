@@ -90,10 +90,10 @@ typedef void (*NihIoWatcher) (void *data, NihIoWatch *watch,
  * this message from the queue, otherwise when a new message arrives, the
  * function will still be called with the same oldest message.
  *
- * It is safe to call nih_io_close() from within the reader function, this
+ * It is safe to call nih_io_destroy() from within the reader function, this
  * results in the structure being flagged to be closed when the watcher
  * that invokes it has finished.  You must not nih_free() @io or cause it
- * to be freed from within this function, except by nih_io_close().
+ * to be freed from within this function, except by nih_io_destroy().
  **/
 typedef void (*NihIoReader) (void *data, NihIo *io,
 			     const char *buf, size_t len);
@@ -108,8 +108,8 @@ typedef void (*NihIoReader) (void *data, NihIo *io,
  * read from it.
  *
  * It should take appropriate action, which may include closing the
- * file descriptor with nih_io_close().  You must not nih_free() @io or
- * cause it to be freed from within this function, except by nih_io_close().
+ * file descriptor with nih_io_destroy().  You must not nih_free() @io or
+ * cause it to be freed from within this function, except by nih_io_destroy().
  **/
 typedef void (*NihIoCloseHandler) (void *data, NihIo *io);
 
@@ -123,8 +123,8 @@ typedef void (*NihIoCloseHandler) (void *data, NihIo *io);
  * itself can be obtained using nih_error_get().
  *
  * It should take appropriate action, which may include closing the
- * file descriptor with nih_io_close().  You must not nih_free() @io or
- * cause it to be freed from within this function, except by nih_io_close().
+ * file descriptor with nih_io_destroy().  You must not nih_free() @io or
+ * cause it to be freed from within this function, except by nih_io_destroy().
  **/
 typedef void (*NihIoErrorHandler) (void *data, NihIo *io);
 
